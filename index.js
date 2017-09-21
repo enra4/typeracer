@@ -1,12 +1,11 @@
 const chalk = require('chalk')
-const DraftLog = require('draftlog')
+const draftLog = require('draftlog')
 const fuzzy = require('fuzzy')
 const inquirer = require('inquirer')
-const keypress = require('keypress')
 const quotes = require('./quotes').quotes
 
 const stdin = process.stdin
-DraftLog(console)
+draftLog(console)
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
 let longAssString = ''
@@ -50,10 +49,10 @@ function main() {
 		if (answer.whatdo === 'Pick quote') {
 			pickQuote()
 		}
-	}).catch(e => {console.log(e)})
+	}).catch(err => {
+		console.log(err)
+	})
 }
-
-let test = ['aaa', 'abc', 'abb']
 
 function pickQuote() {
 	inquirer.prompt({
@@ -65,7 +64,9 @@ function pickQuote() {
 			return new Promise(resolve => {
 				setTimeout(() => {
 					const fuzzyResult = fuzzy.filter(input, quoteStrings)
-					resolve(fuzzyResult.map(el => {return el.original}))
+					resolve(fuzzyResult.map(el => {
+						return el.original
+					}))
 				}, 100)
 			})
 		}
@@ -94,7 +95,7 @@ function play(quoteID) {
 	stdin.setRawMode(true)
 	stdin.resume()
 
-	interval = setInterval(() => {
+	const interval = setInterval(() => {
 		if (!finished) {
 			time += 0.1
 			if (userString.length > 0) wpm = userString.join('').split(' ').length / (time / 60)
@@ -109,7 +110,7 @@ function play(quoteID) {
 			else if (time < 0) timeColour = 'yellow'
 			else if (time < 1) timeColour = 'green'
 
-			updateWpm('wpm: ' + Math.round(wpm * 10) / 10)
+			updateWpm('wpm: ' + (Math.round(wpm * 10) / 10))
 			updateTime('time: ' + chalk[timeColour](Math.round(time * 10) / 10) + 's')
 			updateAcc('acc: ' + acc + '%')
 		} else {
@@ -128,7 +129,7 @@ function onKeypress(ch, key) {
 		if (userString.length < longAssString.length) userString.push(ch)
 	}
 
-	let updatedString = longAssString.split('')
+	const updatedString = longAssString.split('')
 	for (let i = 0; i < userString.length; i++) {
 		if (userString[i] === updatedString[i]) {
 			updatedString[i] = chalk.blue(updatedString[i])
@@ -161,7 +162,6 @@ function onKeypress(ch, key) {
 			if (answer.whatdo === 'Go back') {
 				console.clear()
 				main()
-				return
 			}
 		})
 	}
