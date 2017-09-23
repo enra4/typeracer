@@ -11,7 +11,9 @@ inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 let longAssString = ''
 let userString = []
 
+let timeStarted
 let finished = false
+let onMistake = false
 let wpm = 0
 let time = -2
 let typeMistakes = 0
@@ -81,7 +83,9 @@ function play(quoteID) {
 	longAssString = quotes[quoteID - 1].quote
 	userString = []
 
+	timeStarted = Date.now() + 2000
 	finished = false
+	onMistake = false
 	wpm = 0
 	time = -2
 	typeMistakes = 0
@@ -97,7 +101,7 @@ function play(quoteID) {
 
 	const interval = setInterval(() => {
 		if (!finished) {
-			time += 0.1
+			time = (Date.now() - timeStarted) / 1000
 			if (userString.length > 0) wpm = userString.join('').split(' ').length / (time / 60)
 
 			let acc = 100
@@ -129,15 +133,23 @@ function onKeypress(ch, key) {
 		if (userString.length < longAssString.length) userString.push(ch)
 	}
 
+	let countedMistakes = 0
+
 	const updatedString = longAssString.split('')
 	for (let i = 0; i < userString.length; i++) {
 		if (userString[i] === updatedString[i]) {
 			updatedString[i] = chalk.blue(updatedString[i])
 		} else {
 			updatedString[i] = chalk.bgRed(updatedString[i])
-			typeMistakes++
+			countedMistakes++
+			if (!onMistake) {
+				onMistake = true
+				typeMistakes++
+			}
 		}
 	}
+
+	if (countedMistakes === 0) onMistake = false
 
 	updateString(updatedString.join(''))
 
