@@ -39,17 +39,21 @@ function main() {
 		message: 'What do you want to do?',
 		choices: [
 			'Random quote',
-			'Pick quote'
+			'Pick quote',
+			'Exit'
 		]
 	}).then(answer => {
-		if (answer.whatdo === 'Random quote') {
-			const quoteID = Math.ceil(Math.random() * quotes.length)
-			play(quoteID)
-			return
-		}
-
-		if (answer.whatdo === 'Pick quote') {
-			pickQuote()
+		switch (answer.whatdo) {
+			case 'Random quote':
+				play(Math.ceil(Math.random() * quotes.length))
+				return
+				break
+			case 'Pick quote':
+				pickQuote()
+				break
+			case 'Exit':
+				process.exit()
+				break
 		}
 	}).catch(err => {
 		console.log(err)
