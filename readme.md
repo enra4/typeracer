@@ -6,5 +6,4 @@ shitty typeracer
 * make it so CTRL^C works to exit (now you have to press escape)
 * make it playable when quote takes up more than a line
 * make pick quote not look disgusting
-* make prettier
 * add personal records

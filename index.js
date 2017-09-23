@@ -5,6 +5,7 @@ const inquirer = require('inquirer')
 const quotes = require('./quotes').quotes
 
 const stdin = process.stdin
+const stdout = process.stdout
 draftLog(console)
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
@@ -30,6 +31,7 @@ for (const obj of quotes) {
 	quoteStrings.push(obj.quote)
 }
 
+stdout.write('\u001B[2J\u001B[0;0f')
 main()
 
 function main() {
@@ -43,10 +45,10 @@ function main() {
 			'Exit'
 		]
 	}).then(answer => {
+		stdout.write('\u001B[2J\u001B[0;0f')
 		switch (answer.whatdo) {
 			case 'Random quote':
 				play(Math.ceil(Math.random() * quotes.length))
-				return
 				break
 			case 'Pick quote':
 				pickQuote()
@@ -77,6 +79,7 @@ function pickQuote() {
 			})
 		}
 	}).then(answers => {
+		stdout.write('\u001B[2J\u001B[0;0f')
 		play(quoteStrings.indexOf(answers.whatQuote) + 1)
 	})
 }
@@ -169,15 +172,14 @@ function onKeypress(ch, key) {
 				'Go back'
 			]
 		}).then(answer => {
-			if (answer.whatdo === 'Retry') {
-				console.clear()
-				play(prevQuoteID)
-				return
-			}
-
-			if (answer.whatdo === 'Go back') {
-				console.clear()
-				main()
+			stdout.write('\u001B[2J\u001B[0;0f')
+			switch (answer.whatdo) {
+				case 'Retry':
+					play(prevQuoteID)
+					break
+				case 'Go back':
+					main()
+					break
 			}
 		})
 	}
