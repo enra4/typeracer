@@ -145,7 +145,8 @@ function onKeypress(ch, key) {
 	const updatedString = longAssString.split('')
 	for (let i = 0; i < userString.length; i++) {
 		if (userString[i] === updatedString[i]) {
-			updatedString[i] = chalk.blue(updatedString[i])
+			if (countedMistakes > 0) updatedString[i] = chalk.bgRed(updatedString[i])
+			else updatedString[i] = chalk.blue(updatedString[i])
 		} else {
 			updatedString[i] = chalk.bgRed(updatedString[i])
 			countedMistakes++
