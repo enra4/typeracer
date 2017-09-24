@@ -9,7 +9,12 @@ const stdout = process.stdout
 draftLog(console)
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
-let longAssString = ''
+// draftlog cant update if the string is more than one line,
+// so we split the quotes into lines of 50 char per line.
+// feel free to change this value.
+const MAX_WORDS_PER_LINE = 12
+
+let quoteStrings = []
 let userString = []
 
 let timeStarted
@@ -19,16 +24,16 @@ let wpm = 0
 let time = -2
 let typeMistakes = 0
 
-let updateString
+let updateStrings = []
 let updateWpm
 let updateTime
 let updateAcc
 
 let prevQuoteID
 
-const quoteStrings = []
+const allQuotes = []
 for (const obj of quotes) {
-	quoteStrings.push(obj.quote)
+	allQuotes.push(obj.quote)
 }
 
 stdout.write('\u001B[2J\u001B[0;0f')
@@ -71,7 +76,7 @@ function pickQuote() {
 			input = input || ''
 			return new Promise(resolve => {
 				setTimeout(() => {
-					const fuzzyResult = fuzzy.filter(input, quoteStrings)
+					const fuzzyResult = fuzzy.filter(input, allQuotes)
 					resolve(fuzzyResult.map(el => {
 						return el.original
 					}))
@@ -80,14 +85,14 @@ function pickQuote() {
 		}
 	}).then(answers => {
 		stdout.write('\u001B[2J\u001B[0;0f')
-		play(quoteStrings.indexOf(answers.whatQuote) + 1)
+		play(allQuotes.indexOf(answers.whatQuote) + 1)
 	})
 }
 
 function play(quoteID) {
 	prevQuoteID = quoteID
 
-	longAssString = quotes[quoteID - 1].quote
+	quoteStrings = []
 	userString = []
 
 	timeStarted = Date.now() + 2000
@@ -97,7 +102,17 @@ function play(quoteID) {
 	time = -2
 	typeMistakes = 0
 
-	updateString = console.draft(longAssString)
+	updateStrings = []
+
+	let quoteString = quotes[quoteID - 1].quote.split(' ')
+	for (let i = 0; i < quoteString.length; i += MAX_WORDS_PER_LINE) {
+		let line = quoteString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
+		// add space at end of line
+		if (!(i + MAX_WORDS_PER_LINE > quoteString.length)) line += ' '
+		quoteStrings.push(line)
+		updateStrings.push(console.draft(line))
+	}
+
 	updateWpm = console.draft('wpm: ')
 	updateTime = console.draft('time: ')
 	updateAcc = console.draft('acc: ')
@@ -137,12 +152,12 @@ function onKeypress(ch, key) {
 		if (userString.length === 0) return
 		userString.pop()
 	} else {
-		if (userString.length < longAssString.length) userString.push(ch)
+		if (userString.length < quoteStrings.join('').length) userString.push(ch)
 	}
 
 	let countedMistakes = 0
 
-	const updatedString = longAssString.split('')
+	let updatedString = quoteStrings.join('').split('')
 	for (let i = 0; i < userString.length; i++) {
 		if (userString[i] === updatedString[i]) {
 			if (countedMistakes > 0) updatedString[i] = chalk.bgRed(updatedString[i])
@@ -159,9 +174,15 @@ function onKeypress(ch, key) {
 
 	if (countedMistakes === 0) onMistake = false
 
-	updateString(updatedString.join(''))
+	updatedString = updatedString.join('').split(' ')
+	for (let i = 0; i < updatedString.length; i += MAX_WORDS_PER_LINE) {
+		let line = updatedString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
+		// add space at end of line
+		if (!(i + MAX_WORDS_PER_LINE > updatedString.length)) line += ' '
+		updateStrings[i / MAX_WORDS_PER_LINE](line)
+	}
 
-	if (userString.join('') === longAssString) {
+	if (userString.join('') === quoteStrings.join('')) {
 		finished = true
 		stdin.removeListener('keypress', onKeypress)
 		inquirer.prompt({
