@@ -1,13 +1,15 @@
 {
   "name": "typeracer",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.1.1",
+  "description": "Fancy typeracer for command-line",
+  "author": "enra4 <cudcsb@gmail.com>",
+  "bin": "index.js",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/enra4/typeracer.git"
   },
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "chalk": "^2.1.0",
     "draftlog": "^1.0.12",
@@ -15,5 +17,9 @@
     "inquirer": "^3.2.3",
     "inquirer-autocomplete-prompt": "^0.11.1",
     "lowdb": "^1.0.0"
-  }
+  },
+  "keywords": [
+    "typeracer",
+	"terminal"
+  ]
 }
