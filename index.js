@@ -6,6 +6,7 @@ const quotes = require('./quotes').quotes
 
 const stdin = process.stdin
 const stdout = process.stdout
+stdin.setRawMode(true)
 draftLog(console)
 inquirer.registerPrompt('autocomplete', require('inquirer-autocomplete-prompt'))
 
@@ -146,8 +147,13 @@ function play(quoteID) {
 }
 
 function onKeypress(ch, key) {
+	// listen for CTRL^C
+	if (key && key.ctrl && key.name === 'c') {
+		stdout.write('\u001B[2J\u001B[0;0f')
+		process.exit()
+	}
+
 	if (time < 0) return
-	if (key && key.name === 'escape') process.exit()
 	if (key && key.name === 'backspace') {
 		if (userString.length === 0) return
 		userString.pop()
