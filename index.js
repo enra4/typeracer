@@ -2,7 +2,15 @@ const chalk = require('chalk')
 const draftLog = require('draftlog')
 const fuzzy = require('fuzzy')
 const inquirer = require('inquirer')
+const low = require('lowdb')
+const FileSync = require('lowdb/adapters/FileSync')
 const quotes = require('./quotes').quotes
+
+const adapter = new FileSync('records.json')
+const db = low(adapter)
+
+db.defaults({records: []})
+	.write()
 
 const stdin = process.stdin
 const stdout = process.stdout
@@ -105,7 +113,7 @@ function play(quoteID) {
 
 	updateStrings = []
 
-	let quoteString = quotes[quoteID - 1].quote.split(' ')
+	const quoteString = quotes[quoteID - 1].quote.split(' ')
 	for (let i = 0; i < quoteString.length; i += MAX_WORDS_PER_LINE) {
 		let line = quoteString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
 		// add space at end of line
@@ -191,6 +199,33 @@ function onKeypress(ch, key) {
 	if (userString.join('') === quoteStrings.join('')) {
 		finished = true
 		stdin.removeListener('keypress', onKeypress)
+
+		wpm = Math.round(wpm * 100) / 100 // 2 decimals
+		// handle records
+		const prevRecord = db.get('records')
+			.find({id: prevQuoteID})
+			.value()
+
+		if (!prevRecord) {
+			// no record has been previously set
+			console.log(chalk.yellow('Set first time record of ') + wpm + 'wpm')
+
+			db.get('records')
+				.push({id: prevQuoteID, wpm: wpm})
+				.write()
+		} else {
+			// new record
+			if (wpm > prevRecord.wpm) {
+				const difference = Math.round((wpm - prevRecord.wpm) * 100) / 100
+				console.log(chalk.magenta('New record! ') + wpm + 'wpm' + chalk.green('+' + difference))
+				
+				db.get('records')
+					.find({id: prevQuoteID})
+					.assign({wpm: wpm})
+					.write()
+			}
+		}
+
 		inquirer.prompt({
 			type: 'list',
 			name: 'whatdo',

@@ -3,4 +3,5 @@
 shitty typeracer
 
 ### todo
-* add personal records
+* improve looks?
+* make easier for user to add quotes
