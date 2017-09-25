@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const chalk = require('chalk')
 const draftLog = require('draftlog')
 const fuzzy = require('fuzzy')
