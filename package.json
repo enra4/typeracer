@@ -1,11 +1,12 @@
 {
   "name": "typeracer",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Fancy typeracer for command-line",
   "author": "enra4 <cudcsb@gmail.com>",
-  "bin": "index.js",
-  "main": "index.js",
   "license": "MIT",
+  "bin": {
+    "typeracer": "index.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/enra4/typeracer.git"
@@ -20,6 +21,6 @@
   },
   "keywords": [
     "typeracer",
-	"terminal"
+    "terminal"
   ]
 }
