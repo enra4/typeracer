@@ -122,9 +122,13 @@ function play(quoteID) {
 		updateStrings.push(console.draft(line))
 	}
 
+	console.log('') // empty line for spacing
+
 	updateWpm = console.draft('wpm: ')
 	updateTime = console.draft('time: ')
 	updateAcc = console.draft('acc: ')
+
+	console.log('') // empty line for spacing
 
 	stdin.on('keypress', onKeypress)
 	stdin.setRawMode(true)
@@ -208,7 +212,7 @@ function onKeypress(ch, key) {
 
 		if (!prevRecord) {
 			// no record has been previously set
-			console.log(chalk.yellow('Set first time record of ') + wpm + 'wpm')
+			console.log(chalk.yellow('Set first time record of ') + wpm + 'wpm\n')
 
 			db.get('records')
 				.push({id: prevQuoteID, wpm: wpm})
@@ -217,8 +221,8 @@ function onKeypress(ch, key) {
 			// new record
 			if (wpm > prevRecord.wpm) {
 				const difference = Math.round((wpm - prevRecord.wpm) * 100) / 100
-				console.log(chalk.magenta('New record! ') + wpm + 'wpm' + chalk.green('+' + difference))
-				
+				console.log(chalk.magenta('New record! ') + wpm + 'wpm' + chalk.green('+' + difference) + '\n')
+
 				db.get('records')
 					.find({id: prevQuoteID})
 					.assign({wpm: wpm})
