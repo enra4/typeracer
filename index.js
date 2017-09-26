@@ -3,12 +3,13 @@
 const chalk = require('chalk')
 const draftLog = require('draftlog')
 const fuzzy = require('fuzzy')
+const homeDir = require('home-dir')
 const inquirer = require('inquirer')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const quotes = require('./quotes').quotes
 
-const adapter = new FileSync('records.json')
+const adapter = new FileSync(`${homeDir()}/typeracer-records.json`)
 const db = low(adapter)
 
 db.defaults({records: []})
