@@ -214,7 +214,7 @@ function onKeypress(ch, key) {
 			.value()
 
 		// also log description of quote
-		console.log(chalk.green(quotes[prevQuoteID - 1].about + '\n'))
+		console.log(chalk.inverse(quotes[prevQuoteID - 1].about + '\n'))
 
 		if (!prevRecord) {
 			// no record has been previously set
