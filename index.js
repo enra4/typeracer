@@ -213,6 +213,9 @@ function onKeypress(ch, key) {
 			.find({id: prevQuoteID})
 			.value()
 
+		// also log description of quote
+		console.log(chalk.green(quotes[prevQuoteID - 1].about + '\n'))
+
 		if (!prevRecord) {
 			// no record has been previously set
 			console.log(chalk.yellow('Set first time record of ') + wpm + 'wpm\n')
