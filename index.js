@@ -120,7 +120,7 @@ function play(quoteID) {
 	for (let i = 0; i < quoteString.length; i += MAX_WORDS_PER_LINE) {
 		let line = quoteString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
 		// add space at end of line
-		if (!(i + MAX_WORDS_PER_LINE > quoteString.length)) line += ' '
+		if (!(i + MAX_WORDS_PER_LINE > quoteString.length - 1)) line += ' '
 		quoteStrings.push(line)
 		updateStrings.push(console.draft(line))
 	}
@@ -196,10 +196,8 @@ function onKeypress(ch, key) {
 	if (countedMistakes === 0) onMistake = false
 
 	updatedString = updatedString.join('').split(' ')
-	for (let i = 0; i < updatedString.length; i += MAX_WORDS_PER_LINE) {
+	for (let i = 0; i < updatedString.length - 1; i += MAX_WORDS_PER_LINE) {
 		let line = updatedString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
-		// add space at end of line
-		if (!(i + MAX_WORDS_PER_LINE > updatedString.length)) line += ' '
 		updateStrings[i / MAX_WORDS_PER_LINE](line)
 	}
 
