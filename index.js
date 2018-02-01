@@ -60,10 +60,7 @@ for (const obj of quotes) {
 	allQuotes.push(obj.quote)
 }
 
-stdout.write('\u001B[2J\u001B[0;0f')
-main()
-
-function main() {
+const main = () => {
 	inquirer.prompt({
 		type: 'list',
 		name: 'whatdo',
@@ -85,13 +82,15 @@ function main() {
 			case 'Exit':
 				process.exit()
 				break
+			default:
+				process.exit()
 		}
 	}).catch(err => {
 		console.log(err)
 	})
 }
 
-function pickQuote() {
+const pickQuote = () => {
 	inquirer.prompt({
 		type: 'autocomplete',
 		name: 'whatQuote',
@@ -113,7 +112,7 @@ function pickQuote() {
 	})
 }
 
-function play(quoteID) {
+const play = (quoteID) => {
 	prevQuoteID = quoteID
 
 	quoteStrings = []
@@ -150,7 +149,9 @@ function play(quoteID) {
 	stdin.resume()
 
 	const interval = setInterval(() => {
-		if (!finished) {
+		if (finished) {
+			clearInterval(interval)
+		} else {
 			time = (Date.now() - timeStarted) / 1000
 			if (userString.length > 0) wpm = userString.join('').split(' ').length / (time / 60)
 
@@ -167,8 +168,6 @@ function play(quoteID) {
 			updateWpm('wpm: ' + (Math.round(wpm * 10) / 10))
 			updateTime('time: ' + chalk[timeColour](Math.round(time * 10) / 10) + 's')
 			updateAcc('acc: ' + acc + '%')
-		} else {
-			clearInterval(interval)
 		}
 	}, 100)
 }
@@ -184,8 +183,8 @@ function onKeypress(ch, key) {
 	if (key && key.name === 'backspace') {
 		if (userString.length === 0) return
 		userString.pop()
-	} else {
-		if (userString.length < quoteStrings.join('').length) userString.push(ch)
+	} else if (userString.length < quoteStrings.join('').length) {
+		userString.push(ch)
 	}
 
 	let countedMistakes = 0
@@ -209,7 +208,7 @@ function onKeypress(ch, key) {
 
 	updatedString = updatedString.join('').split(' ')
 	for (let i = 0; i < updatedString.length - 1; i += MAX_WORDS_PER_LINE) {
-		let line = updatedString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
+		const line = updatedString.slice(i, i + MAX_WORDS_PER_LINE).join(' ')
 		updateStrings[i / MAX_WORDS_PER_LINE](line)
 	}
 
@@ -231,19 +230,17 @@ function onKeypress(ch, key) {
 			console.log(chalk.yellow('Set first time record of ') + wpm + 'wpm\n')
 
 			db.get('records')
-				.push({id: prevQuoteID, wpm: wpm})
+				.push({id: prevQuoteID, wpm})
 				.write()
-		} else {
+		} else if (wpm > prevRecord.wpm) {
 			// new record
-			if (wpm > prevRecord.wpm) {
-				const difference = Math.round((wpm - prevRecord.wpm) * 100) / 100
-				console.log(chalk.magenta('New record! ') + wpm + 'wpm' + chalk.green('+' + difference) + '\n')
+			const difference = Math.round((wpm - prevRecord.wpm) * 100) / 100
+			console.log(chalk.magenta('New record! ') + wpm + 'wpm' + chalk.green('+' + difference) + '\n')
 
-				db.get('records')
-					.find({id: prevQuoteID})
-					.assign({wpm: wpm})
-					.write()
-			}
+			db.get('records')
+				.find({id: prevQuoteID})
+				.assign({wpm})
+				.write()
 		}
 
 		inquirer.prompt({
@@ -263,7 +260,12 @@ function onKeypress(ch, key) {
 				case 'Go back':
 					main()
 					break
+				default:
+					process.exit()
 			}
 		})
 	}
 }
+
+stdout.write('\u001B[2J\u001B[0;0f')
+main()
