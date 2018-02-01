@@ -5,7 +5,7 @@
 ## Install
 
 ```
-$ npm install --global typeracer
+# npm install --global typeracer
 ```
 
 ## Things to know
