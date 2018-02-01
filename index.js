@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+const fs = require('fs')
 
 const chalk = require('chalk')
 const draftLog = require('draftlog')
@@ -9,7 +10,17 @@ const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
 const quotes = require('./quotes').quotes
 
-const adapter = new FileSync(`${homeDir()}/typeracer-records.json`)
+// if old file exist move to new one
+// new file must also not exist, or else something fishy is going on
+const oldFileExists = fs.existsSync(`${homeDir()}/typeracer-records.json`)
+const newFileExists = fs.existsSync(`${homeDir()}/.typeracer-records.json`)
+if (oldFileExists && !newFileExists) {
+	const content = fs.readFileSync(`${homeDir()}/typeracer-records.json`)
+	fs.writeFileSync(`${homeDir()}/.typeracer-records.json`, content, 'utf8')
+	fs.unlinkSync(`${homeDir()}/typeracer-records.json`)
+}
+
+const adapter = new FileSync(`${homeDir()}/.typeracer-records.json`)
 const db = low(adapter)
 
 db.defaults({records: []})
