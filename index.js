@@ -8,7 +8,7 @@ const inquirer = require('inquirer')
 const logUpdate = require('log-update')
 const low = require('lowdb')
 const FileSync = require('lowdb/adapters/FileSync')
-// const wcwidth = require('wcwidth')
+const stringLength = require('string-length')
 
 const quotes = require('./quotes').quotes
 const allQuotes = []
@@ -43,14 +43,24 @@ let prevQuoteID
 let quote = 'hey man this is some typetesting'
 let typedString = ''
 let typeMistakes = 0
-let termWidth = 0
-let finished = false
+let finished = true
 let onMistake = false
 let timeStarted = 0
 
 let wpm = 0
 let acc = 100
 let time = 0
+
+// if terminal is resized to smaller
+// clear terminal and update
+stdout.on('resize', () => {
+	// only if playing
+	if (!finished) {
+		// clear terminal
+		stdout.write('\u001B[2J\u001B[0;0f')
+		update()
+	}
+})
 
 const colourify = (quote, typedString) => {
 	let colouredString = ''
@@ -79,6 +89,40 @@ const colourify = (quote, typedString) => {
 	}
 
 	return colouredString
+}
+
+// checks if a space is needed
+const spaceOrNot = (words, index) => {
+	let string = ''
+	if (index === words.length - 1) {
+		string = `${words[index]}`
+	} else {
+		string = `${words[index]} `
+	}
+
+	return string
+}
+
+// makes sure quote fits to terminal size
+const fitify = string => {
+	const words = string.split(' ')
+	const formattedLines = ['']
+	// default maxwidth is 80
+	const maxWidth = (stdout.columns < 80) ? stdout.columns - 1 : 80
+
+	for (let i = 0; i < words.length; i++) {
+		const j = formattedLines.length - 1
+		if (stringLength(formattedLines[j] + words[i] + ' ') > maxWidth) {
+			// new line
+			formattedLines.push(spaceOrNot(words, i))
+		} else {
+			formattedLines[j] += spaceOrNot(words, i)
+		}
+	}
+
+	// join array together for string
+	const formatted = formattedLines.join('\n')
+	return formatted
 }
 
 const updateAcc = () => {
@@ -124,9 +168,7 @@ const update = () => {
 	else if (time < 0) timeColour = 'yellow'
 	else if (time < 1) timeColour = 'green'
 
-	// termWidth
-	// stdout.columns
-	// then, update the looks
+	updatedString = fitify(updatedString)
 	logUpdate(
 `${updatedString}
 
@@ -212,7 +254,6 @@ const play = quoteID => {
 	quote = quotes[quoteID - 1].quote
 	typedString = ''
 	typeMistakes = 0
-	termWidth = 0
 	finished = false
 	onMistake = false
 	timeStarted = Date.now() + 2000
@@ -223,7 +264,7 @@ const play = quoteID => {
 	stdin.on('keypress', onKeypress)
 	stdin.setRawMode(true)
 	stdin.resume()
-	
+
 	const interval = setInterval(() => {
 		if (finished) {
 			donezo()
@@ -270,6 +311,7 @@ const main = () => {
 			'Exit'
 		]
 	}).then(answer => {
+		// clear terminal
 		stdout.write('\u001B[2J\u001B[0;0f')
 		switch (answer.whatdo) {
 			case 'Random quote':
