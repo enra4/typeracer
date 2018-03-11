@@ -46,6 +46,7 @@ let typeMistakes = 0
 let termWidth = 0
 let finished = false
 let onMistake = false
+let timeStarted = 0
 
 let wpm = 0
 let acc = 100
@@ -109,7 +110,7 @@ const updateWpm = () => {
 }
 
 const updateTime = () => {
-	time += 0.1
+	time = (Date.now() - timeStarted) / 1000
 }
 
 const update = () => {
@@ -118,8 +119,6 @@ const update = () => {
 	// and add the untyped part, uncoloured
 	updatedString += quote.slice(typedString.length, quote.length)
 
-	// typeMistakes are updated in colourify,
-	// stupid but thats why this has to be under
 	updateWpm()
 	updateTime()
 	updateAcc()
@@ -219,6 +218,7 @@ const play = quoteID => {
 	termWidth = 0
 	finished = false
 	onMistake = false
+	timeStarted = Date.now() + 2000
 
 	wpm = 0
 	time = -2
