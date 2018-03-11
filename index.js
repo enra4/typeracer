@@ -119,9 +119,6 @@ const update = () => {
 	// and add the untyped part, uncoloured
 	updatedString += quote.slice(typedString.length, quote.length)
 
-	updateWpm()
-	updateTime()
-	updateAcc()
 	let timeColour = 'white'
 	if (time < -1) timeColour = 'red'
 	else if (time < 0) timeColour = 'yellow'
@@ -226,11 +223,15 @@ const play = quoteID => {
 	stdin.on('keypress', onKeypress)
 	stdin.setRawMode(true)
 	stdin.resume()
+	
 	const interval = setInterval(() => {
 		if (finished) {
 			donezo()
 			clearInterval(interval)
 		} else {
+			updateWpm()
+			updateTime()
+			updateAcc()
 			update()
 		}
 	}, 100)
