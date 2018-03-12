@@ -142,7 +142,9 @@ const updateAcc = () => {
 	}
 
 	// dont remember how this works but im just gonna leave it
-	if (typeMistakes !== 0) {
+	if (typeMistakes === 0) {
+		acc = 100
+	} else {
 		acc = Math.round(((typedString.length - typeMistakes) / typedString.length) * 1000) / 10
 	}
 }
