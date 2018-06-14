@@ -198,15 +198,16 @@ const play = () => {
 	stdin.resume()
 
 	const interval = setInterval(() => {
+		updatePercentFinished()
+		updateWpm()
+		updateTime()
+		updateAcc()
+		update()
+
 		if (finished) {
 			percentFinished = 100
+			stdin.removeListener('keypress', onKeypress)
 			clearInterval(interval)
-		} else {
-			updatePercentFinished()
-			updateWpm()
-			updateTime()
-			updateAcc()
-			update()
 		}
 	}, 100)
 }
