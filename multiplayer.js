@@ -258,10 +258,16 @@ module.exports = (host, name) => {
 			let playersFinished = 0
 			for (const player of data.players) {
 				allProgress += `\n${player.name}: ${player.percent}%`
-				if (player.percent === 100) playersFinished++
+				if (player.percent === 100) {
+					playersFinished++
+					allProgress += ` rank: ${playersFinished}`
+				}
 			}
 
-			if (playersFinished === data.players.length) allFinished = true
+			if (playersFinished === data.players.length) {
+				allFinished = true
+				allProgress += '\n\nNew quote coming up shortly :)'
+			}
 		}
 	})
 
