@@ -24,6 +24,9 @@ let acc = 100
 let time = 0
 let percentFinished = 0
 
+let allProgress = ''
+let allFinished = false
+
 // if terminal is resized to smaller
 // clear terminal and update
 stdout.on('resize', () => {
@@ -160,7 +163,7 @@ const update = () => {
 wpm: ${Math.round(wpm * 10) / 10}
 acc: ${acc}
 time: ${chalk[timeColour](Math.round(time * 10) / 10)}s
-percentFinished: ${percentFinished}`
+${allProgress}`
 	)
 }
 
@@ -192,21 +195,26 @@ const play = () => {
 	wpm = 0
 	time = -2
 	percentFinished = 0
+	allFinished = false
 
 	stdin.on('keypress', onKeypress)
 	stdin.setRawMode(true)
 	stdin.resume()
 
 	const interval = setInterval(() => {
-		updatePercentFinished()
-		updateWpm()
-		updateTime()
-		updateAcc()
-		update()
-
 		if (finished) {
 			percentFinished = 100
 			stdin.removeListener('keypress', onKeypress)
+		} else {
+			updateWpm()
+			updateTime()
+			updateAcc()
+		}
+
+		updatePercentFinished()
+		update()
+
+		if (allFinished) {
 			clearInterval(interval)
 		}
 	}, 100)
@@ -224,8 +232,9 @@ module.exports = (host, name) => {
 	})
 
 	client.on('data', data => {
-		if (JSON.parse(data).type === 'quote') {
-			quote = JSON.parse(data).info.quote
+		data = JSON.parse(data)
+		if (data.type === 'quote') {
+			quote = data.info.quote
 			play()
 
 			const a = setInterval(() => {
@@ -242,6 +251,17 @@ module.exports = (host, name) => {
 					percentFinished = 0
 				}
 			}, 1000)
+		}
+
+		if (data.type === 'progress') {
+			allProgress = ''
+			let playersFinished = 0
+			for (const player of data.players) {
+				allProgress += `\n${player.name}: ${player.percent}%`
+				if (player.percent === 100) playersFinished++
+			}
+
+			if (playersFinished === data.players.length) allFinished = true
 		}
 	})
 
