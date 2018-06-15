@@ -12,6 +12,12 @@ stdin.setRawMode(true)
 stdin.resume()
 require('readline').emitKeypressEvents(stdin)
 
+stdin.on('keypress', (ch, key) => {
+	if (key.ctrl && key.name === 'c') {
+		process.exit()
+	}
+})
+
 let quote = ''
 let typedString = ''
 let typeMistakes = 0
@@ -168,10 +174,6 @@ ${allProgress}`
 }
 
 const onKeypress = (ch, key) => {
-	if (key.ctrl && key.name === 'c') {
-		process.exit()
-	}
-
 	if (time < 0) return
 	if (key && key.name === 'backspace') {
 		if (typedString.length === 0) return
