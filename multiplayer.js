@@ -287,7 +287,7 @@ module.exports = (host, name) => {
 
 	client.on('end', () => {
 		console.log('connetion closed')
-		console.log('if you got instantly kicked your is probably already in use')
+		console.log('if you got instantly kicked your name is probably already in use')
 		process.exit()
 	})
 }
