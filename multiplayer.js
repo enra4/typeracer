@@ -220,6 +220,18 @@ const play = () => {
 	}, 100)
 }
 
+const progressBar = percent => {
+	const maxChar = 22
+	let string = '|'
+
+	string += '='.repeat(Math.round((maxChar - 2) * (percent / 100)))
+	// -2 because '|' on each side
+	string += ' '.repeat(maxChar - string.length - 1)
+	// -1 because '|' on left side
+	string += '|'
+	return string
+}
+
 module.exports = (host, name) => {
 	const client = net.connect({port: 1234, host: host}, () => {
 		console.log('connected')
@@ -257,7 +269,7 @@ module.exports = (host, name) => {
 			allProgress = ''
 			let playersFinished = 0
 			for (const player of data.players) {
-				allProgress += `\n${player.name}: ${player.percent}%`
+				allProgress += `\n${player.name} ${progressBar(player.percent)}`
 				if (player.percent === 100) {
 					playersFinished++
 					allProgress += ` rank: ${playersFinished}`
