@@ -253,7 +253,8 @@ module.exports = (host, name) => {
 				const query = {
 					type: 'update',
 					name: name,
-					percent: percentFinished
+					percent: percentFinished,
+					wpm: Math.round(wpm * 10) / 10
 				}
 
 				client.write(`${JSON.stringify(query)}\n`)
@@ -269,11 +270,8 @@ module.exports = (host, name) => {
 			allProgress = ''
 			let playersFinished = 0
 			for (const player of data.players) {
-				allProgress += `\n${player.name} ${progressBar(player.percent)}`
-				if (player.percent === 100) {
-					playersFinished++
-					allProgress += ` rank: ${playersFinished}`
-				}
+				allProgress += `\n${player.name} ${progressBar(player.percent)} ${player.wpm} wpm`
+				if (player.percent === 100) playersFinished++
 			}
 
 			if (playersFinished === data.players.length) {
