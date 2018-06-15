@@ -221,7 +221,7 @@ const play = () => {
 }
 
 const progressBar = percent => {
-	const maxChar = 22
+	const maxChar = 18
 	let string = '|'
 
 	string += '='.repeat(Math.round((maxChar - 2) * (percent / 100)))
@@ -270,18 +270,22 @@ module.exports = (host, name) => {
 			allProgress = ''
 			let playersFinished = 0
 			for (const player of data.players) {
-				allProgress += `\n${player.name} ${progressBar(player.percent)} ${player.wpm} wpm`
+				allProgress += `\n${player.name} ${' '.repeat(16 - player.name.length)}`
+				// 16- because thats max length on player name
+				allProgress += `${progressBar(player.percent)} ${player.wpm} wpm`
 				if (player.percent === 100) playersFinished++
 			}
 
 			if (playersFinished === data.players.length) {
 				allFinished = true
-				allProgress += '\n\nNew quote coming up shortly :)'
+				allProgress += '\n\nnew quote coming up shortly :)'
 			}
 		}
 	})
 
 	client.on('end', () => {
 		console.log('connetion closed')
+		console.log('if you got instantly kicked your is probably already in use')
+		process.exit()
 	})
 }

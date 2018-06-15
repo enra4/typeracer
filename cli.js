@@ -40,6 +40,11 @@ if (cli.flags.name && cli.flags.host === undefined) {
 	process.exit()
 }
 
+if (cli.flags.name.length > 16) {
+	console.log('name needs to be 16 char or less :)')
+	process.exit()
+}
+
 if (cli.flags.host && cli.flags.name) {
 	multiplayer(cli.flags.host, cli.flags.name)
 } else {
