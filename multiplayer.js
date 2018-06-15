@@ -265,7 +265,7 @@ module.exports = (host, name) => {
 					clearInterval(a)
 					percentFinished = 0
 				}
-			}, 1000)
+			}, 500)
 		}
 
 		if (data.type === 'progress') {
