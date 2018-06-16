@@ -236,7 +236,7 @@ const progressBar = percent => {
 
 module.exports = (host, name) => {
 	const client = net.connect({port: 1234, host: host}, () => {
-		console.log('connected')
+		logUpdate('connected')
 		const join = {
 			type: 'join',
 			name: name
@@ -286,17 +286,17 @@ module.exports = (host, name) => {
 
 		if (data.type === 'in_game') {
 			if (data.in_game) {
-				console.log('waiting for other players to finish')
+				logUpdate('waiting for other players to finish')
 				return
 			}
 
-			console.log('youre all alone :(')
+			logUpdate('youre all alone :(')
 		}
 	})
 
 	client.on('end', () => {
-		console.log('connetion closed')
-		console.log('if you got instantly kicked your is probably already in use')
+		logUpdate('connetion closed')
+		logUpdate('if you got instantly kicked your is probably already in use')
 		process.exit()
 	})
 }
