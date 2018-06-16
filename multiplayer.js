@@ -283,6 +283,15 @@ module.exports = (host, name) => {
 				allProgress += '\n\nnew quote coming up shortly :)'
 			}
 		}
+
+		if (data.type === 'in_game') {
+			if (data.in_game) {
+				console.log('waiting for other players to finish')
+				return
+			}
+
+			console.log('youre all alone :(')
+		}
 	})
 
 	client.on('end', () => {
