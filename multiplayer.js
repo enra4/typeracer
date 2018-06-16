@@ -18,6 +18,8 @@ stdin.on('keypress', (ch, key) => {
 	}
 })
 
+let loggingInterval
+
 let quote = ''
 let typedString = ''
 let typeMistakes = 0
@@ -203,7 +205,7 @@ const play = () => {
 	stdin.setRawMode(true)
 	stdin.resume()
 
-	const interval = setInterval(() => {
+	loggingInterval = setInterval(() => {
 		if (finished) {
 			percentFinished = 100
 			stdin.removeListener('keypress', onKeypress)
@@ -217,7 +219,7 @@ const play = () => {
 		update()
 
 		if (allFinished) {
-			clearInterval(interval)
+			clearInterval(loggingInterval)
 		}
 	}, 100)
 }
@@ -290,6 +292,7 @@ module.exports = (host, name) => {
 				return
 			}
 
+			clearInterval(loggingInterval)
 			logUpdate('youre all alone :(')
 		}
 	})
