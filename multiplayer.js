@@ -21,6 +21,7 @@ stdin.on('keypress', (ch, key) => {
 let loggingInterval
 
 let quote = ''
+let about = ''
 let typedString = ''
 let typeMistakes = 0
 let finished = true
@@ -251,6 +252,7 @@ module.exports = (host, port, name) => {
 		data = JSON.parse(data)
 		if (data.type === 'quote') {
 			quote = data.info.quote
+			about = data.info.about
 			play()
 
 			const a = setInterval(() => {
@@ -279,6 +281,8 @@ module.exports = (host, port, name) => {
 				allProgress += `${progressBar(player.percent)} ${player.wpm} wpm`
 				if (player.percent === 100) playersFinished++
 			}
+
+			if (percentFinished === 100) allProgress += `\n\n${chalk.inverse(about)}`
 
 			if (playersFinished === data.players.length) {
 				allFinished = true
