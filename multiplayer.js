@@ -236,8 +236,8 @@ const progressBar = percent => {
 	return string
 }
 
-module.exports = (host, name) => {
-	const client = net.connect({port: 1234, host: host}, () => {
+module.exports = (host, port, name) => {
+	const client = net.connect({host, port}, () => {
 		logUpdate('connected')
 		const join = {
 			type: 'join',

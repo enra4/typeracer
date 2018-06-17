@@ -46,7 +46,15 @@ if (cli.flags.name.length > 16) {
 }
 
 if (cli.flags.host && cli.flags.name) {
-	multiplayer(cli.flags.host, cli.flags.name)
+	let port = 1234
+
+	let index = cli.flags.host.indexOf(':')
+	if (index !== -1) {
+		port = cli.flags.host.slice(index + 1, cli.flags.host.length)
+		cli.flags.host = cli.flags.host.slice(0, index)
+	}
+
+	multiplayer(cli.flags.host, port, cli.flags.name)
 } else {
 	singleplayer()
 }
