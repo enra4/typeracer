@@ -238,7 +238,6 @@ const progressBar = percent => {
 
 module.exports = (host, port, name) => {
 	const client = net.connect({host, port}, () => {
-		logUpdate('connected')
 		const join = {
 			type: 'join',
 			name: name
@@ -298,8 +297,7 @@ module.exports = (host, port, name) => {
 	})
 
 	client.on('end', () => {
-		logUpdate('connetion closed')
-		logUpdate('if you got instantly kicked your name is probably already in use')
+		logUpdate('connetion closed\nif you got instantly kicked your name is probably already in use')
 		process.exit()
 	})
 }
