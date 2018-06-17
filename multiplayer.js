@@ -292,6 +292,7 @@ module.exports = (host, port, name) => {
 			}
 
 			clearInterval(loggingInterval)
+			stdin.removeListener('keypress', onKeypress)
 			logUpdate('youre all alone :(')
 		}
 	})
