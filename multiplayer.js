@@ -190,6 +190,7 @@ const onKeypress = (ch, key) => {
 
 const play = () => {
 	// reset stuff
+	stdin.removeListener('keypress', onKeypress)
 	typedString = ''
 	typeMistakes = 0
 	finished = false
