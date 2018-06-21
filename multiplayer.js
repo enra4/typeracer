@@ -170,8 +170,8 @@ const update = () => {
 `${updatedString}
 
 wpm: ${Math.round(wpm * 10) / 10}
-acc: ${acc}
 time: ${chalk[timeColour](Math.round(time * 10) / 10)}s
+acc: ${acc}%
 ${allProgress}`
 	)
 }
